@@ -1,5 +1,6 @@
 import random
 
+
 class Minesweeper:
     def __init__(self, width=10, height=10, mines=10):
         self.width = width
@@ -12,7 +13,10 @@ class Minesweeper:
 
     def adjacent_mines(self, x, y):
         return sum(1 for dx in [-1, 0, 1] for dy in [-1, 0, 1]
-                   if (dx != 0 or dy != 0) and self.is_mine(x + dx, y + dy))
+                   if (dx != 0 or dy != 0) and
+                   0 <= x + dx < self.width and
+                   0 <= y + dy < self.height and
+                   self.is_mine(x + dx, y + dy))
 
     def reveal(self, x, y):
         if (x, y) in self.revealed:
@@ -44,7 +48,7 @@ class Minesweeper:
         return len(self.revealed) + len(self.mines) == self.width * self.height
 
     def is_loss(self, x, y):
-        return (x, y) in self.mines
+        return self.is_mine(x, y)
 
     def play(self):
         while True:
@@ -52,6 +56,7 @@ class Minesweeper:
             x, y = map(int, input("Enter coordinates (x y): ").split())
             if 0 <= x < self.width and 0 <= y < self.height:
                 self.reveal(x, y)
+                print(self.is_loss(x, y))
                 if self.is_loss(x, y):
                     print("Boom! You hit a mine.")
                     self.display()
@@ -63,6 +68,12 @@ class Minesweeper:
             else:
                 print("Invalid coordinates. Please try again.")
 
+
 if __name__ == '__main__':
-    game = Minesweeper(10, 10, 20)
-    game.play()
+    while True:
+        x, y, m = map(int, input("Enter board size and number of mines (x y m): ").split())
+        game = Minesweeper(x, y, m)
+        game.play()
+        tmp = input("type anything to keep playing. type exit to finish.")
+        if tmp == "exit":
+            break
